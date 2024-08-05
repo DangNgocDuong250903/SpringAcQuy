@@ -21,3 +21,5 @@ spring:
   properties:
     hibernate:
       dialect: org.hibernate.dialect.MySQLDialect
+jwt:
+  signerKey: "ELjnG67maSPb0PG8ropXO1mUgoVe6q4aDJmbkVmxXv0Z+zn6HtlDts7B4p9D7uUX"
