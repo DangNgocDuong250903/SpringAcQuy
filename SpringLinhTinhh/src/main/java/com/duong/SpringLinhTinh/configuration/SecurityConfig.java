@@ -8,6 +8,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -50,15 +52,19 @@ public class SecurityConfig {
 
     @Bean
     JwtDecoder jwtDecoder(){
-        SecretKeySpec secretKeySpec = new SecretKeySpec(SigningKey.getBytes(), "HmacSHA");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(SigningKey.getBytes(), "HmacSHA512"); // Tao ra mot doi tuong SecretKeySpec de tao ra doi tuong JwtDecoder
         return NimbusJwtDecoder
                 .withSecretKey(secretKeySpec)
                 .macAlgorithm(MacAlgorithm.HS512)
                 .build();
         // Tao ra mot doi tuong JwtDecoder de giai ma token
-        // MacAlgorithm.HS512: Su dung thuat toan HS512 de giai ma token
-    };
+    }
 
+    @Bean
+    PasswordEncoder  passwordEncoder(){
+        return  new BCryptPasswordEncoder(10);
+    }
+    // Ma hoa password de dung nhieu lan
 }
 
 

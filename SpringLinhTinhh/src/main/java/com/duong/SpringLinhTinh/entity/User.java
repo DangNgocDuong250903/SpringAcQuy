@@ -8,6 +8,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,58 +20,18 @@ import java.time.LocalDate;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-    private String username;
-    private String password;
-    private String firstName;
-    private String lastName;
-    private LocalDate dob;
 
-    public String getId() {
-        return id;
-    }
+     String id;
 
-    public void setId(String id) {
-        this.id = id;
-    }
+     String username;
 
-    public String getUsername() {
-        return username;
-    }
+     String password;
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+     String firstName;
 
-    public String getPassword() {
-        return password;
-    }
+     String lastName;
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+     LocalDate dob;
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public LocalDate getDob() {
-        return dob;
-    }
-
-    public void setDob(LocalDate dob) {
-        this.dob = dob;
-    }
+     Set<String> roles;
 }

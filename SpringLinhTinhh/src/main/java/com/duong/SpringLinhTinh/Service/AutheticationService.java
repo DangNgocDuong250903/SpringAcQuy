@@ -41,19 +41,17 @@ public class AutheticationService {
     String SIGNER_KEY;
 
     public introspecResponse introspect(introspecRequest request)
+            // Kiem tra token co hop le hay khong
             throws JOSEException, ParseException {
         var token = request.getToken();
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
         // Tao JWSVerifier de kiem tra token
-
         SignedJWT signedJWT = SignedJWT.parse(token);
         // Parse token thanh SignedJWT
-
         Date expityTime = signedJWT.getJWTClaimsSet().getExpirationTime();
         // Lay thoi gian het han cua token
 
         var verified = signedJWT.verify(verifier); // Kiem tra token: true -> false
-
 
         return introspecResponse
                 .builder()
@@ -62,7 +60,10 @@ public class AutheticationService {
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request)
+        // Ham nay se tra ve token neu username va password dung, nguoc lai se tra ve loi
+            throws AppException
+        {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         // Ham BCryptPasswordEncoder se ma hoa password nguoi dung nhap vao
         // Ham nay se tra ve true neu username va password dung, nguoc lai se tra ve false
