@@ -1,9 +1,14 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0" version="24.7.6">
   <diagram name="Page-1" id="nQI1sdtNu85v_ybSC34Q">
-    <mxGraphModel>
+    <mxGraphModel dx="1336" dy="721" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <UserObject label="&lt;a href=&quot;https://app.diagrams.net/#G1CHSQKJFEU_aLrKM0NpKVw95PaugMPf63#%7B%22pageId%22%3A%22WpCMBSi64khIZ5ZmyKl1%22%7D&quot;&gt;SpringBoot.drawio - draw.io (diagrams.net)&lt;/a&gt;" link="&lt;a href=&quot;https://app.diagrams.net/#G1CHSQKJFEU_aLrKM0NpKVw95PaugMPf63#%7B%22pageId%22%3A%22WpCMBSi64khIZ5ZmyKl1%22%7D&quot;&gt;SpringBoot.drawio - draw.io (diagrams.net)&lt;/a&gt;" id="xdIUeOFl-FMUt-MAuLhk-1">
+          <mxCell style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+            <mxGeometry x="190" y="640" width="260" height="40" as="geometry" />
+          </mxCell>
+        </UserObject>
       </root>
     </mxGraphModel>
   </diagram>
