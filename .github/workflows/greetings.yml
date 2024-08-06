@@ -11,6 +11,6 @@ jobs:
     steps:
     - uses: actions/first-interaction@v1
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        issue-message: "Be careful"
-        pr-message: "Just pull gently"
+        repo-token: ${{ secrets.MY_GITHUB_TOKEN }} # Sử dụng bí mật bạn vừa tạo
+        issue-message: "Be careful"              # Tin nhắn gửi đến khi có issue mới
+        pr-message: "Just pull gently"           # Tin nhắn gửi đến khi có pull request mới
