@@ -4,6 +4,7 @@ import com.duong.SpringLinhTinh.dto.request.AuthenticationRequest;
 import com.duong.SpringLinhTinh.dto.request.introspecRequest;
 import com.duong.SpringLinhTinh.dto.response.AuthenticationResponse;
 import com.duong.SpringLinhTinh.dto.response.introspecResponse;
+import com.duong.SpringLinhTinh.entity.User;
 import com.duong.SpringLinhTinh.exception.AppException;
 import com.duong.SpringLinhTinh.exception.ErrorCode;
 import com.duong.SpringLinhTinh.repository.UserRepository;
@@ -21,11 +22,14 @@ import org.springframework.boot.autoconfigure.info.ProjectInfoAutoConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.Date;
+import java.util.StringJoiner;
 
 import static org.hibernate.query.sqm.tree.SqmNode.log;
 
@@ -75,14 +79,15 @@ public class AutheticationService {
         if(!authentication)
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
-        var token = generateToken(request.getUsername());
+        var token = generateToken(user);
+
         return AuthenticationResponse.builder()
                 .token(token)
                 .authenticated(true)
                 .build();
         }
 
-        private String generateToken(String username){
+        private String generateToken(User user){
         // Tao token JWT
             JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         // Tao JWSHeader de chua thong tin ve thuat toan ma hoa
@@ -90,22 +95,21 @@ public class AutheticationService {
                     //subject: thông tin về đối tượng mà token đại diện (trong trường hợp này là username).
                     //issueTime: thời gian phát hành token.
                     //expirationTime: thời gian hết hạn của token (được tính là 1 giờ từ thời điểm hiện tại).
-                    .subject(username)
+                    .subject(user.getUsername())
                     .issuer("devteria.com") //Dinh danh cau hinh
                     .issueTime(new Date())
                     .expirationTime(new Date(
                             // Tao token co thoi gian song la 1h
                             Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                     ))
-                    .claim("CustomerClaim", "This is a custom claim")
+                    .claim("Scope", buildScope(user))
                     .build();
             // Tao JWTClaimsSet de chua thong tin cua token
             Payload payload = new Payload(jwtClaimsSet.toJSONObject());
-            // Tao Payload de chua JWTClaimsSet
+            // Tao Payload de chua JWTClaimsSet duoi dang JSON
             JWSObject jwsObject = new JWSObject(header,payload);
             //Sử dụng khóa ký (SIGNER_KEY) để ký jwsObject.
             //Nếu ký thành công, trả về token dưới dạng chuỗi.
-            //Nếu có lỗi trong quá trình ký, ghi lại lỗi và ném ngoại lệ RuntimeException.
             try {
                 jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
                 return jwsObject.serialize();
@@ -114,6 +118,12 @@ public class AutheticationService {
                 log.error("Cannot create token", e);
                 throw new RuntimeException(e);
             }
-            // Tao JWSObject de chua Header va Payload
+        }
+        private String buildScope(User user){
+            StringJoiner stringJoiner = new StringJoiner(" ");
+            if(!CollectionUtils.isEmpty(user.getRoles()))
+                user.getRoles().forEach(stringJoiner::add);
+
+            return stringJoiner.toString();
         }
 }

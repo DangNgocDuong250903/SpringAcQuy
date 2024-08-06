@@ -15,7 +15,6 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
@@ -52,7 +51,7 @@ public class SecurityConfig {
 
     @Bean
     JwtDecoder jwtDecoder(){
-        SecretKeySpec secretKeySpec = new SecretKeySpec(SigningKey.getBytes(), "HmacSHA512"); // Tao ra mot doi tuong SecretKeySpec de tao ra doi tuong JwtDecoder
+        SecretKeySpec secretKeySpec = new SecretKeySpec(SigningKey.getBytes(), "HS512"); // Tao ra mot doi tuong SecretKeySpec de tao ra doi tuong JwtDecoder
         return NimbusJwtDecoder
                 .withSecretKey(secretKeySpec)
                 .macAlgorithm(MacAlgorithm.HS512)
