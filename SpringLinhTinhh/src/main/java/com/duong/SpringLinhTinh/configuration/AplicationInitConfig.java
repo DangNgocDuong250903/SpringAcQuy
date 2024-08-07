@@ -6,6 +6,7 @@ import com.duong.SpringLinhTinh.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -20,16 +21,20 @@ import java.util.HashSet;
 public class AplicationInitConfig {
 
     PasswordEncoder passwordEncoder;
+    @NonFinal
+    static final String ADMIN_USER_NAME = "admin";
+    @NonFinal
+    static final String ADMIN_PASSWORD = "admin";
 
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository) {
         return args -> {
-            if(userRepository.findByUsername("adminn").isEmpty()){
+            if(userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()){
                 var roles = new HashSet<String>();
                 roles.add(Role.ADMIN.name());
                 User user = User.builder()
-                        .username("admin")
-                        .password(passwordEncoder.encode("admin"))
+                        .username(ADMIN_USER_NAME)
+                        .password(passwordEncoder.encode(ADMIN_PASSWORD))
                         .roles(roles)
                         .build();
 

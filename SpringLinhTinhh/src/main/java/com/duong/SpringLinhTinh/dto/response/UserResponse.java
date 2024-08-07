@@ -1,16 +1,16 @@
 package com.duong.SpringLinhTinh.dto.response;
 
-import com.duong.SpringLinhTinh.entity.User;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.util.Set;
 
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
     String id;
