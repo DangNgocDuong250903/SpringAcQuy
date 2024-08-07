@@ -1,11 +1,13 @@
 package com.duong.SpringLinhTinh.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 import java.util.Set;
+
+import com.duong.SpringLinhTinh.enums.Role;
+import jakarta.persistence.*;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -14,7 +16,6 @@ import java.util.Set;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "username")})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -31,5 +32,5 @@ public class User {
 
      LocalDate dob;
 
-     Set<String> roles;
+    Set<String> roles;
 }

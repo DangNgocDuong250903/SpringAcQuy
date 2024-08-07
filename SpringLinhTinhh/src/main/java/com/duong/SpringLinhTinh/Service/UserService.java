@@ -13,7 +13,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.dao.DataIntegrityViolationException;
+
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,12 +42,15 @@ public class UserService {
         //PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);  //Da khai bao Bean nay trong SecurityConfig
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
+        // Ensure roles are assigned to users
         HashSet<String> roles = new HashSet<>();
-        //mac dinh role cho user la USER
-        roles.add(Role.USER.name());
-        //them role cho user
+        roles.add(Role.USER.name()); // Default role
         user.setRoles(roles);
-
+        try {
+            user = userRepository.save(user);
+        } catch (DataIntegrityViolationException exception) {
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
         return userMapper.toUserResponse(userRepository.save(user));
     }
 

@@ -6,6 +6,7 @@ import com.duong.SpringLinhTinh.dto.request.UserCreationRequest;
 import com.duong.SpringLinhTinh.dto.request.UserUpdateRequest;
 import com.duong.SpringLinhTinh.dto.response.UserResponse;
 import com.duong.SpringLinhTinh.entity.User;
+import com.duong.SpringLinhTinh.enums.Role;
 import com.duong.SpringLinhTinh.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -23,10 +24,9 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/users")
 public class UserController {
+
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     UserService userService;
-    UserRepository userRepository;
-
 
     @PostMapping
     ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
@@ -37,16 +37,13 @@ public class UserController {
 
     @GetMapping
     ApiResponse<List<UserResponse>> getUsers() {
-        var authentication =  SecurityContextHolder.getContext().getAuthentication();
-
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("Username: {}", authentication.getName());
         authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
-
         return ApiResponse.<List<UserResponse>>builder()
                 .result(userService.getUsers())
                 .build();
     }
-
     @GetMapping("/{userId}")
     ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
         return ApiResponse.<UserResponse>builder()
