@@ -119,11 +119,12 @@ public class AutheticationService {
                 throw new RuntimeException(e);
             }
         }
+        //Build Scope
         private String buildScope(User user){
             StringJoiner stringJoiner = new StringJoiner(" ");
             if(!CollectionUtils.isEmpty(user.getRoles()))
                 user.getRoles().forEach(stringJoiner::add);
-
+    // Thêm các quyền của user vào stringJoiner để tạo scope
             return stringJoiner.toString();
         }
 }

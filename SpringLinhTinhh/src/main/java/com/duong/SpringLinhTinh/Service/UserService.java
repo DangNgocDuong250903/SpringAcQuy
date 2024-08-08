@@ -35,7 +35,7 @@ public class UserService {
 
     public UserResponse createUser(UserCreationRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
         User user = userMapper.toUser(request);
         //Ma hoa Pass
@@ -51,8 +51,9 @@ public class UserService {
         } catch (DataIntegrityViolationException exception) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
-        return userMapper.toUserResponse(userRepository.save(user));
+        return userMapper.toUserResponse(user);
     }
+
 
     public List<UserResponse> getUsers() {
         return userRepository.findAll().stream()

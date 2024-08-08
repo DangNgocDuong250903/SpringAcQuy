@@ -2,10 +2,7 @@ package com.duong.SpringLinhTinh.entity;
 
 import java.time.LocalDate;
 import java.util.Set;
-
-import com.duong.SpringLinhTinh.enums.Role;
 import jakarta.persistence.*;
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,18 +16,14 @@ import lombok.experimental.FieldDefaults;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    String id;
 
-     String id;
+    String username;
+    String password;
+    String firstName;
+    String lastName;
+    LocalDate dob;
 
-     String username;
-
-     String password;
-
-     String firstName;
-
-     String lastName;
-
-     LocalDate dob;
 
     Set<String> roles;
 }

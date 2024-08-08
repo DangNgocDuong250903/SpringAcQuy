@@ -1,5 +1,6 @@
 package com.duong.SpringLinhTinh.configuration;
 
+import com.duong.SpringLinhTinh.enums.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -33,21 +36,33 @@ public class SecurityConfig {
                 .authorizeRequests(requests ->
                         requests.requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
         // Cho phep tat ca cac request POST den cac endpoint PUBLIC_ENDPOINTS
+
+                                .requestMatchers(HttpMethod.GET,"/users")
+                                .hasRole(Role.ADMIN.name())
                                 .anyRequest().authenticated());
         // Đối với mọi yêu cầu khác, yêu cầu người dùng phải được xác thực
 
         httpSecurity.oauth2ResourceServer(oath2 ->
         //Cấu hình để sử dụng OAuth2 Resource Server.
-                oath2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder()))
+                oath2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter())));
         // Cấu hình OAuth2 Resource Server để sử dụng JWT, và thiết lập bộ giải mã JWT
-                );
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         // Disable CSRF neu khong thi khong the hien thi du lieu tren trinh duyet
 
         return httpSecurity.build();
     }
+    @Bean
+    JwtAuthenticationConverter jwtAuthenticationConverter(){
+        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
 
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+
+        return jwtAuthenticationConverter;
+    }
 
     @Bean
     JwtDecoder jwtDecoder(){
