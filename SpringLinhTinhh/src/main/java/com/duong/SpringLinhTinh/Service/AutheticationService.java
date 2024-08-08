@@ -41,42 +41,27 @@ public class AutheticationService {
 
     @NonFinal
     @Value("${jwt.signerKey}")
-    protected
-    String SIGNER_KEY;
+    protected String SIGNER_KEY;
 
     public introspecResponse introspect(introspecRequest request)
-            // Kiem tra token co hop le hay khong
             throws JOSEException, ParseException {
         var token = request.getToken();
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
-        // Tao JWSVerifier de kiem tra token
         SignedJWT signedJWT = SignedJWT.parse(token);
-        // Parse token thanh SignedJWT
-        Date expityTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-        // Lay thoi gian het han cua token
+        Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+        var verified = signedJWT.verify(verifier);
 
-        var verified = signedJWT.verify(verifier); // Kiem tra token: true -> false
-
-        return introspecResponse
-                .builder()
-                .valid(verified && expityTime.after(new Date()))
-                // Neu token hop le va chua het han thi tra ve true, nguoc lai tra ve false
+        return introspecResponse.builder()
+                .valid(verified && expiryTime.after(new Date()))
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request)
-        // Ham nay se tra ve token neu username va password dung, nguoc lai se tra ve loi
-            throws AppException
-        {
+    public AuthenticationResponse authenticate(AuthenticationRequest request) throws AppException {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        // Ham BCryptPasswordEncoder se ma hoa password nguoi dung nhap vao
-        // Ham nay se tra ve true neu username va password dung, nguoc lai se tra ve false
-       var user = userRepository.findByUsername(request.getUsername())
-               .orElseThrow(() -> new AppException(ErrorCode.USERNAME_INVALID));
-        // Tim user trong DB theo username nguoi dung nhap vao
-        boolean authentication =  passwordEncoder.matches(request.getPassword(), user.getPassword());
-        // Ham matches se so sanh password nguoi dung nhap vao voi password da duoc ma hoa trong DB
-        if(!authentication)
+        var user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_INVALID));
+        boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
+        if (!authenticated)
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         var token = generateToken(user);
@@ -85,46 +70,33 @@ public class AutheticationService {
                 .token(token)
                 .authenticated(true)
                 .build();
-        }
+    }
 
-        private String generateToken(User user){
-        // Tao token JWT
-            JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
-        // Tao JWSHeader de chua thong tin ve thuat toan ma hoa
-            JWTClaimsSet jwtClaimsSet= new JWTClaimsSet.Builder()
-                    //subject: thông tin về đối tượng mà token đại diện (trong trường hợp này là username).
-                    //issueTime: thời gian phát hành token.
-                    //expirationTime: thời gian hết hạn của token (được tính là 1 giờ từ thời điểm hiện tại).
-                    .subject(user.getUsername())
-                    .issuer("devteria.com") //Dinh danh cau hinh
-                    .issueTime(new Date())
-                    .expirationTime(new Date(
-                            // Tao token co thoi gian song la 1h
-                            Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
-                    ))
-                    .claim("Scope", buildScope(user))
-                    .build();
-            // Tao JWTClaimsSet de chua thong tin cua token
-            Payload payload = new Payload(jwtClaimsSet.toJSONObject());
-            // Tao Payload de chua JWTClaimsSet duoi dang JSON
-            JWSObject jwsObject = new JWSObject(header,payload);
-            //Sử dụng khóa ký (SIGNER_KEY) để ký jwsObject.
-            //Nếu ký thành công, trả về token dưới dạng chuỗi.
-            try {
-                jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
-                return jwsObject.serialize();
-                //serialize() chuyển JWSObject thành chuỗi
-            } catch (JOSEException e) {
-                log.error("Cannot create token", e);
-                throw new RuntimeException(e);
-            }
+    private String generateToken(User user) {
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
+        JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
+                .subject(user.getUsername())
+                .issuer("devteria.com")
+                .issueTime(new Date())
+                .expirationTime(Date.from(Instant.now().plus(1, ChronoUnit.HOURS)))
+                .claim("scope", buildScope(user))
+                .build();
+        JWSObject jwsObject = new JWSObject(header, new Payload(jwtClaimsSet.toJSONObject()));
+
+        try {
+            jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
+            return jwsObject.serialize();
+        } catch (JOSEException e) {
+            log.error("Cannot create token", e);
+            throw new RuntimeException(e);
         }
-        //Build Scope
-        private String buildScope(User user){
-            StringJoiner stringJoiner = new StringJoiner(" ");
-            if(!CollectionUtils.isEmpty(user.getRoles()))
-                user.getRoles().forEach(stringJoiner::add);
-    // Thêm các quyền của user vào stringJoiner để tạo scope
-            return stringJoiner.toString();
-        }
+    }
+
+    private String buildScope(User user) {
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        if (!CollectionUtils.isEmpty(user.getRoles()))
+            user.getRoles().forEach(role -> stringJoiner.add("ROLE_" + role));
+
+        return stringJoiner.toString();
+    }
 }

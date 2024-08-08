@@ -1,11 +1,10 @@
 package com.duong.SpringLinhTinh.configuration;
 
-import com.duong.SpringLinhTinh.enums.Role;
+import org.springframework.http.HttpMethod;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,7 +21,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
 @EnableWebSecurity
-
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS={"/users","/auth/token","/auth/introspect"};
@@ -37,8 +36,6 @@ public class SecurityConfig {
                         requests.requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
         // Cho phep tat ca cac request POST den cac endpoint PUBLIC_ENDPOINTS
 
-                                .requestMatchers(HttpMethod.GET,"/users")
-                                .hasRole(Role.ADMIN.name())
                                 .anyRequest().authenticated());
         // Đối với mọi yêu cầu khác, yêu cầu người dùng phải được xác thực
 
@@ -56,7 +53,7 @@ public class SecurityConfig {
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter(){
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(" ");
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);

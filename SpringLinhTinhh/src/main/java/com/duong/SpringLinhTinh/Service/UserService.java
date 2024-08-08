@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,9 +47,12 @@ public class UserService {
         // Ensure roles are assigned to users
         HashSet<String> roles = new HashSet<>();
         roles.add(Role.USER.name()); // Default role
+        roles.add(Role.ADMIN.name());
+
         user.setRoles(roles);
         try {
             user = userRepository.save(user);
+            log.info("User created successfully: {}", user.getUsername());
         } catch (DataIntegrityViolationException exception) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
@@ -55,16 +60,21 @@ public class UserService {
     }
 
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getUsers() {
+        log.info("In method getUser");
         return userRepository.findAll().stream()
                 .map(userMapper::toUserResponse)
                 .collect(Collectors.toList());
     }
 
+    @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUser(String id) {
-        return userMapper.toUserResponse(userRepository.findById(id)
+        log.info("In method getUser by ID");
+                return userMapper.toUserResponse(userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found")));
     }
+
 
     public UserResponse updateUser(String userID, UserUpdateRequest request) {
         User user = userRepository.findById(userID)
@@ -76,4 +86,5 @@ public class UserService {
     public void deleteUser(String userID) {
         userRepository.deleteById(userID);
     }
+
 }
