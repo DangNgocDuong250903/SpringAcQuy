@@ -34,14 +34,17 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeRequests(requests ->
                         requests.requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
+                                      .anyRequest().authenticated());
         // Cho phep tat ca cac request POST den cac endpoint PUBLIC_ENDPOINTS
 
-                                .anyRequest().authenticated());
+
         // Đối với mọi yêu cầu khác, yêu cầu người dùng phải được xác thực
-        httpSecurity.oauth2ResourceServer(oath2 ->
         //Cấu hình để sử dụng OAuth2 Resource Server.
+        httpSecurity.oauth2ResourceServer(oath2 ->
                 oath2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter())));
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+        );
         // Cấu hình OAuth2 Resource Server để sử dụng JWT, và thiết lập bộ giải mã JWT
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         // Disable CSRF neu khong thi khong the hien thi du lieu tren trinh duyet
