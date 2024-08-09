@@ -18,11 +18,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,8 +49,6 @@ public class UserService {
         // Ensure roles are assigned to users
         HashSet<String> roles = new HashSet<>();
         roles.add(Role.USER.name()); // Default role
-        roles.add(Role.ADMIN.name());
-
         user.setRoles(roles);
         try {
             user = userRepository.save(user);
@@ -60,7 +60,16 @@ public class UserService {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    public  UserResponse getMyinfo(){
+       var context =  SecurityContextHolder.getContext();
+      String name= context.getAuthentication().getName();
+
+      User user =  userRepository.findByUsername(name).orElseThrow(
+              () -> new AppException(ErrorCode.USER_NOT_EXISTED));
+      return userMapper.toUserResponse(user);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<UserResponse> getUsers() {
         log.info("In method getUser");
         return userRepository.findAll().stream()
@@ -68,9 +77,10 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    //Chi có user có username trùng với username trong token mới được phép xem thông tin
     @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUser(String id) {
-        log.info("In method getUser by ID");
+        log.info("In method get User by ID");
                 return userMapper.toUserResponse(userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found")));
     }
