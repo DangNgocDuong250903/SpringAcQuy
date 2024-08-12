@@ -49,7 +49,7 @@ public class UserService {
         // Ensure roles are assigned to users
         HashSet<String> roles = new HashSet<>();
         roles.add(Role.USER.name()); // Default role
-        user.setRoles(roles);
+       // user.setRoles(roles);
         try {
             user = userRepository.save(user);
             log.info("User created successfully: {}", user.getUsername());
