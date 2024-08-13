@@ -34,7 +34,6 @@
 		<spotless.version>2.43.0</spotless.version>
 	</properties>
 	<dependencies>
-		<!-- https://mvnrepository.com/artifact/net.jcip/jcip-annotations -->
 		<dependency>
 			<groupId>net.jcip</groupId>
 			<artifactId>jcip-annotations</artifactId>
@@ -50,6 +49,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-crypto</artifactId>
@@ -59,42 +59,42 @@
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
-
-
-		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto -->
-		<!-- https://mvnrepository.com/artifact/com.nimbusds/nimbus-jose-jwt -->
 
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>${projectlombok-lombok.version}</version>
 			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
 			<version>${mapstruct.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -102,11 +102,12 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
+ 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>mysql</artifactId>
 			<scope>test</scope>
 		</dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -168,6 +169,6 @@
 					</compilerArgs>
 				</configuration>
 			</plugin>
-								</plugins>
+		</plugins>
 	</build>
 </project>
