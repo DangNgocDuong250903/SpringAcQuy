@@ -7,6 +7,7 @@ import com.duong.SpringLinhTinh.dto.response.RoleResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 @RequestMapping("/roles")
 public class RoleController {
     RoleService roleService;
@@ -33,8 +35,11 @@ public class RoleController {
     }
 
     @DeleteMapping("/{role}")
-    ApiResponse<Void> delete(@RequestParam String role){
+    ApiResponse<Void> delete(@PathVariable String role){
         roleService.delete(role);
-        return ApiResponse.<Void>builder().build();
+        return ApiResponse.<Void>builder()
+                .message("Delete role "+role+" successfully")
+                .build();
     }
+
 }
