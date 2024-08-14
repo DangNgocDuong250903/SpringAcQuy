@@ -7,6 +7,7 @@ import com.duong.SpringLinhTinh.entity.User;
 import com.duong.SpringLinhTinh.enums.Role;
 import com.duong.SpringLinhTinh.exception.AppException;
 import com.duong.SpringLinhTinh.exception.ErrorCode;
+import com.duong.SpringLinhTinh.mapper.RoleRepository;
 import com.duong.SpringLinhTinh.mapper.UserMapper;
 import com.duong.SpringLinhTinh.repository.UserRepository;
 import lombok.AccessLevel;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     UserRepository userRepository;
+    RoleRepository roleRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
@@ -90,6 +92,11 @@ public class UserService {
         User user = userRepository.findById(userID)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         userMapper.updateUser(user, request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        var roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
+
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
