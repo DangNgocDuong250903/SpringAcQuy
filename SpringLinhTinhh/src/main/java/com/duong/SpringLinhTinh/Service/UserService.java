@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,14 +39,14 @@ public class UserService {
     PasswordEncoder passwordEncoder;
 
     public UserResponse createUser(UserCreationRequest request) {
+        User user = userMapper.toUser(request);
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
-        User user = userMapper.toUser(request);
+
         //Ma hoa Pass
         //PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);  //Da khai bao Bean nay trong SecurityConfig
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
         // Ensure roles are assigned to users
         HashSet<String> roles = new HashSet<>();
         roles.add(Role.USER.name()); // Default role
@@ -70,8 +69,9 @@ public class UserService {
               () -> new AppException(ErrorCode.USER_NOT_EXISTED));
       return userMapper.toUserResponse(user);
     }
-
+    //hasrole -> check
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+//     @PreAuthorize("hasAuthority('APPROVE_POST ')")
     public List<UserResponse> getUsers() {
         log.info("In method getUser");
         return userRepository.findAll().stream()

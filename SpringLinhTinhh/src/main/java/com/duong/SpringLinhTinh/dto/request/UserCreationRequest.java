@@ -1,6 +1,7 @@
 package com.duong.SpringLinhTinh.dto.request;
 
 
+import com.duong.SpringLinhTinh.validator.DobConstraint;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -19,6 +20,9 @@ public class UserCreationRequest {
     private String password;
     private String firstName;
     private String lastName;
+
+
+    @DobConstraint( min = 18,message = "INVALID_DOB")
     private LocalDate dob;
 
 }
