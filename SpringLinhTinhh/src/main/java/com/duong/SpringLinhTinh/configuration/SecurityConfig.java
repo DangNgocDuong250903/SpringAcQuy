@@ -24,7 +24,7 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final String[] PUBLIC_ENDPOINTS={"/users","/auth/token","/auth/introspect"};
+    private final String[] PUBLIC_ENDPOINTS={"/users","/auth/token","/auth/introspect","/auth/logout"};
         // Cac endpoint public
     @Value("${jwt.signerKey}")
     private String SigningKey;
@@ -79,10 +79,3 @@ public class SecurityConfig {
     }
     // Ma hoa password de dung nhieu lan
 }
-
-
-//Các endpoint công khai có thể được truy cập mà không cần xác thực.
-//Các yêu cầu khác yêu cầu xác thực.
-//Sử dụng OAuth2 Resource Server với JWT để xác thực.
-//Vô hiệu hóa CSRF để tránh lỗi khi hiển thị dữ liệu trên trình duyệt.
-//Sử dụng khóa ký từ file cấu hình và giải mã JWT sử dụng thuật toán HS512.
