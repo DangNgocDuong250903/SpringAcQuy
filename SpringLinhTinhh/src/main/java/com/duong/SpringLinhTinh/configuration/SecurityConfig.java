@@ -1,5 +1,6 @@
 package com.duong.SpringLinhTinh.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -25,9 +26,12 @@ import javax.crypto.spec.SecretKeySpec;
 public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS={"/users","/auth/token","/auth/introspect","/auth/logout"};
-        // Cac endpoint public
-    @Value("${jwt.signerKey}")
-    private String SigningKey;
+//     Cac endpoint public
+//    @Value("${jwt.signerKey}")
+//    private String SigningKey;
+
+    @Autowired
+    private CustomJwtDecoder customJwtDecoder;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -36,19 +40,16 @@ public class SecurityConfig {
                         requests.requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
                                       .anyRequest().authenticated());
         // Cho phep tat ca cac request POST den cac endpoint PUBLIC_ENDPOINTS
-
-
         // Đối với mọi yêu cầu khác, yêu cầu người dùng phải được xác thực
         //Cấu hình để sử dụng OAuth2 Resource Server.
         httpSecurity.oauth2ResourceServer(oath2 ->
-                oath2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
+                oath2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
         );
         // Cấu hình OAuth2 Resource Server để sử dụng JWT, và thiết lập bộ giải mã JWT
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         // Disable CSRF neu khong thi khong the hien thi du lieu tren trinh duyet
-
         return httpSecurity.build();
     }
 
@@ -63,15 +64,15 @@ public class SecurityConfig {
         return jwtAuthenticationConverter;
     }
 
-    @Bean
-    JwtDecoder jwtDecoder(){
-        SecretKeySpec secretKeySpec = new SecretKeySpec(SigningKey.getBytes(), "HS512"); // Tao ra mot doi tuong SecretKeySpec de tao ra doi tuong JwtDecoder
-        return NimbusJwtDecoder
-                .withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
-                .build();
-        // Tao ra mot doi tuong JwtDecoder de giai ma token
-    }
+//    @Bean
+//    JwtDecoder jwtDecoder(){
+//        SecretKeySpec secretKeySpec = new SecretKeySpec(SigningKey.getBytes(), "HS512"); // Tao ra mot doi tuong SecretKeySpec de tao ra doi tuong JwtDecoder
+//        return NimbusJwtDecoder
+//                .withSecretKey(secretKeySpec)
+//                .macAlgorithm(MacAlgorithm.HS512)
+//                .build();
+//        // Tao ra mot doi tuong JwtDecoder de giai ma token
+//    }
 
     @Bean
     PasswordEncoder  passwordEncoder(){
