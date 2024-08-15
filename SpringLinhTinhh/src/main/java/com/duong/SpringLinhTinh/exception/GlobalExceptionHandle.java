@@ -43,6 +43,7 @@ public class GlobalExceptionHandle {
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
 
+
     @ExceptionHandler(value = AccessDeniedException.class)
     ResponseEntity<ApiResponse> handlingAccessDeniedException(AccessDeniedException exception) {
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
@@ -54,6 +55,7 @@ public class GlobalExceptionHandle {
                         .build());
     }
 
+
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception) {
         String enumKey = exception.getFieldError().getDefaultMessage();
@@ -64,24 +66,19 @@ public class GlobalExceptionHandle {
             errorCode = ErrorCode.valueOf(enumKey);
 
             var constraintViolation =
-                    exception.getBindingResult().getAllErrors().get(0).unwrap(ConstraintViolation.class); // Correct the method call here
-
+                    exception.getBindingResult().getAllErrors().getFirst().unwrap(ConstraintViolation.class); // Correct the method call here
             attributes = constraintViolation.getConstraintDescriptor().getAttributes();
 
             log.info(attributes.toString());
 
-        } catch (IllegalArgumentException e) {
-
-        }
+        } catch (IllegalArgumentException e) {}
 
         ApiResponse apiResponse = new ApiResponse();
-
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(
                 Objects.nonNull(attributes)
                         ? mapAttribute(errorCode.getMessage(), attributes)
-                        : errorCode.getMessage());
-
+                        : errorCode.getMessage()); //Xem file abtributes.txt
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
@@ -89,7 +86,7 @@ public class GlobalExceptionHandle {
 
     private String mapAttribute(String message, Map<String, Object> attributes) {
         String minValue = String.valueOf(attributes.get(MIN_ATTRIBUTE));
-
+        //MIN_ATTRIBUTE: Key value cua min:18 trong DobConstraint
         return message.replace("{" + MIN_ATTRIBUTE + "}", minValue);
     }
 }
