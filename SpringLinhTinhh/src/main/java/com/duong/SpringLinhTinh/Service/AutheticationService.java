@@ -2,6 +2,7 @@
 
         import com.duong.SpringLinhTinh.dto.request.AuthenticationRequest;
         import com.duong.SpringLinhTinh.dto.request.LogoutRequest;
+        import com.duong.SpringLinhTinh.dto.request.RefreshRequest;
         import com.duong.SpringLinhTinh.dto.request.introspecRequest;
         import com.duong.SpringLinhTinh.dto.response.AuthenticationResponse;
         import com.duong.SpringLinhTinh.dto.response.introspecResponse;
@@ -93,6 +94,34 @@
                 invalidatedRepository.save(invalidatedToken);
 
             }
+
+            public AuthenticationResponse refreshToken(RefreshRequest request)
+                    throws ParseException, JOSEException {
+                //Kiem tra hieu luc token
+                var signedJWT = verifyToken(request.getToken());
+
+                var jti = signedJWT.getJWTClaimsSet().getJWTID();
+                var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime(); //Thoi gian het han cua token
+
+                 InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                        .id(jti)
+                        .expiryTime(expiryTime)
+                        .build();
+
+                invalidatedRepository.save(invalidatedToken);
+
+                var username = signedJWT.getJWTClaimsSet().getSubject();
+                var user = userRepository.findByUsername(username)
+                        .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+                 var token = generateToken(user);
+
+                return AuthenticationResponse.builder()
+                        .token(token)
+                        .authenticated(true)
+                        .build();
+            }
+
             private SignedJWT verifyToken(String token) throws ParseException, JOSEException {
                 JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
 

@@ -1,10 +1,7 @@
 package com.duong.SpringLinhTinh.Controller;
 
 import com.duong.SpringLinhTinh.Service.AutheticationService;
-import com.duong.SpringLinhTinh.dto.request.ApiResponse;
-import com.duong.SpringLinhTinh.dto.request.AuthenticationRequest;
-import com.duong.SpringLinhTinh.dto.request.LogoutRequest;
-import com.duong.SpringLinhTinh.dto.request.introspecRequest;
+import com.duong.SpringLinhTinh.dto.request.*;
 import com.duong.SpringLinhTinh.dto.response.AuthenticationResponse;
 import com.duong.SpringLinhTinh.dto.response.introspecResponse;
 import com.nimbusds.jose.JOSEException;
@@ -31,6 +28,15 @@ public class AuthenticationController {
                 .result(result)
                 .build();
     }
+
+        @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> authentication(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
+        var result= autheticationService.refreshToken(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(result)
+                .build();
+    }
+
     @PostMapping("/introspect")
     ApiResponse<introspecResponse> authentication(@RequestBody introspecRequest request)
             throws  ParseException,JOSEException {
@@ -47,4 +53,6 @@ public class AuthenticationController {
         return ApiResponse.<Void>builder()
                 .build();
     }
+
+
 }
