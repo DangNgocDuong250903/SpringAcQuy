@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0" version="24.7.6">
   <diagram name="Page-1" id="IiKWfaLGEAQ7wXJNBV4k">
-    <mxGraphModel dx="530" dy="601" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="-114" dy="489" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -17,6 +17,9 @@
         </mxCell>
         <mxCell id="kr8paNhLtI3nxgarg2Cw-5" value="&lt;li&gt;&lt;strong&gt;Nếu &lt;code data-copier-init=&quot;true&quot;&gt;isRefresh&lt;/code&gt; là &lt;code data-copier-init=&quot;true&quot;&gt;true&lt;/code&gt;:&lt;/strong&gt; Thời gian hết hạn (&lt;code data-copier-init=&quot;true&quot;&gt;expiryTime&lt;/code&gt;) sẽ được tính lại bằng cách cộng thêm một khoảng thời gian (&lt;code data-copier-init=&quot;true&quot;&gt;REFRESHABLE_DURATION&lt;/code&gt;) vào thời gian hết hạn hiện tại của JWT.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Nếu &lt;code data-copier-init=&quot;true&quot;&gt;isRefresh&lt;/code&gt; là &lt;code data-copier-init=&quot;true&quot;&gt;false&lt;/code&gt;:&lt;/strong&gt; Thời gian hết hạn (&lt;code data-copier-init=&quot;true&quot;&gt;expiryTime&lt;/code&gt;) sẽ giữ nguyên như thời gian hết hạn ban đầu của token.&lt;/li&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="930" y="190" width="360" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kr8paNhLtI3nxgarg2Cw-8" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="1660" y="10" width="20" height="20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
