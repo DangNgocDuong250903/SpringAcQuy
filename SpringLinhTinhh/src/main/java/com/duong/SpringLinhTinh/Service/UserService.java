@@ -39,6 +39,7 @@ public class UserService {
     PasswordEncoder passwordEncoder;
 
     public UserResponse createUser(UserCreationRequest request) {
+        log.info("Service create user: {}", request);
         User user = userMapper.toUser(request);
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
