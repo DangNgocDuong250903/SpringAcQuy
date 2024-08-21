@@ -86,5 +86,30 @@ public class UserControllerTest {
                 );
         //THEN
     }
+      @Test
+    void createUser_UserNameInValidRequest_Fail() throws Exception {
+        request.setUsername("ac");
+        //GIVEN
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        String content = objectMapper.writeValueAsString(request); //Convert object to JSON
+
+//        Mockito.when(userService.createUser(ArgumentMatchers.any()))
+//                .thenReturn(userResponse);
+
+        //WHEN,THEN
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/users")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(content))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest()) //errors: 400
+                .andExpect(MockMvcResultMatchers.jsonPath("code")
+                        .value(1003))
+                .andExpect(MockMvcResultMatchers.jsonPath("message")
+                        .value("Username must be at least 3 characters")
+                );
+        //THEN
+    }
 
 }
+

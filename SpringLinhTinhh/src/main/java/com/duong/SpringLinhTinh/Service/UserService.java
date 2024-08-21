@@ -44,7 +44,6 @@ public class UserService {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
-
         //Ma hoa Pass
         //PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);  //Da khai bao Bean nay trong SecurityConfig
         user.setPassword(passwordEncoder.encode(request.getPassword()));
