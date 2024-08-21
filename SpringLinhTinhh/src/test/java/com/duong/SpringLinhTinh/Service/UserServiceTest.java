@@ -89,8 +89,8 @@ public class UserServiceTest {
 
         //THEN
         Assertions.assertThat(exception.getErrorCode().getCode())
-                .isEqualTo(1002)
-                
+                .isEqualTo(1002);
+
 
 //                .isEqualTo(123);
     }
