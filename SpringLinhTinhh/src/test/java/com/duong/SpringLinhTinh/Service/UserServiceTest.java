@@ -84,11 +84,14 @@ public class UserServiceTest {
         Mockito.when(userRepository.existsByUsername(anyString())).thenReturn(true);
 
         //WHEN
-        var exception = assertThrows(AppException.class, () -> userService.createUser(request));
+        var exception = assertThrows(AppException.class,
+                () -> userService.createUser(request));
 
         //THEN
-        Assertions.assertThat(exception.getErrorCode())
-                .isEqualTo(1003);
+        Assertions.assertThat(exception.getErrorCode().getCode())
+                .isEqualTo(1002)
+                
+
 //                .isEqualTo(123);
     }
 }
