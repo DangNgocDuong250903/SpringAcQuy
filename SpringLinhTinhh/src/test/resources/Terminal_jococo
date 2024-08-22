@@ -1,0 +1,3 @@
+./mvnw test jacoco:report
+
+mvn clean test jacoco:report

@@ -27,4 +27,8 @@ public enum ErrorCode {
     private final int code;
     private final String message;
     private final HttpStatusCode statusCode;
+
+    public int getStatusCode() {
+        return this.code >= 1000 ? 400 : 200;
+    }
 }

@@ -58,6 +58,7 @@ public class GlobalExceptionHandle {
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception) {
+        log.error("Validation error: {}", exception.getMessage());
         String enumKey = exception.getFieldError().getDefaultMessage();
 
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
@@ -71,7 +72,8 @@ public class GlobalExceptionHandle {
 
             log.info(attributes.toString());
 
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+        }
 
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setCode(errorCode.getCode());
@@ -81,7 +83,6 @@ public class GlobalExceptionHandle {
                         : errorCode.getMessage()); //Xem file abtributes.txt
         return ResponseEntity.badRequest().body(apiResponse);
     }
-
 
 
     private String mapAttribute(String message, Map<String, Object> attributes) {
