@@ -10,6 +10,7 @@ import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +30,13 @@ public class AplicationInitConfig {
     static final String ADMIN_PASSWORD = "admin";
 
     @Bean
+    @ConditionalOnProperty(prefix = "spring",
+            value = "datasource.driverClassName",
+            havingValue = "com.mysql.cj.jdbc.Driver"
+    ) //Run khi datasource.driverClassName = com.mysql.cj.jdbc.Driver, ngc lai thi khong chay
+
     ApplicationRunner applicationRunner(UserRepository userRepository) {
+            log.info("Application init config is running .......................");
         return args -> {
             if(userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()){
                 var roles = new HashSet<String>();

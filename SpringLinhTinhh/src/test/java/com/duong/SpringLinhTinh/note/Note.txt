@@ -1,0 +1,7 @@
+    @ConditionalOnProperty(prefix = "spring",
+            value = "datasource.driverClassName",
+            havingValue = "com.mysql.cj.jdbc.Driver"
+    ) //Run khi datasource.driverClassName = com.mysql.cj.jdbc.Driver, ngc lai thi khong chay
+
+
+    Class: AplicationInitConfig
