@@ -1,8 +1,7 @@
 package com.duong.SpringLinhTinh.configuration;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.http.HttpMethod;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -11,40 +10,40 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-
-import javax.crypto.spec.SecretKeySpec;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final String[] PUBLIC_ENDPOINTS={"/users","/auth/token","/auth/introspect","/auth/logout","/auth/refresh"};
+    private static final String[] PUBLIC_ENDPOINTS = {"/users", "/auth/token", "/auth/introspect", "/auth/logout", "/auth/refresh"};
 //     Cac endpoint public
 //    @Value("${jwt.signerKey}")
 //    private String SigningKey;
 
-    @Autowired
-    private CustomJwtDecoder customJwtDecoder;
+    private final CustomJwtDecoder customJwtDecoder;
+
+    public SecurityConfig(CustomJwtDecoder customJwtDecoder) {
+        this.customJwtDecoder = customJwtDecoder;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeRequests(requests ->
-                        requests.requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
-                                      .anyRequest().authenticated());
+                        requests.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                                .anyRequest().authenticated());
         // Cho phep tat ca cac request POST den cac endpoint PUBLIC_ENDPOINTS
         // Đối với mọi yêu cầu khác, yêu cầu người dùng phải được xác thực
         //Cấu hình để sử dụng OAuth2 Resource Server.
         httpSecurity.oauth2ResourceServer(oath2 ->
                 oath2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
         );
         // Cấu hình OAuth2 Resource Server để sử dụng JWT, và thiết lập bộ giải mã JWT
@@ -54,7 +53,21 @@ public class SecurityConfig {
     }
 
     @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter(){
+    public CorsFilter corsFilter() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.addAllowedOrigin("http://localhost:3000"); // Cho phep tat ca domain truy cap
+        corsConfiguration.addAllowedMethod("*"); // Cho phep tat ca cac phuong thuc truy cap
+        corsConfiguration.addAllowedHeader("*"); // Cho phep tat ca cac header truy cap
+
+        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration); // Cho phep tat ca cac duong dan truy cap
+
+        return new CorsFilter(urlBasedCorsConfigurationSource);
+    }
+
+
+    @Bean
+    JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
 
@@ -75,8 +88,8 @@ public class SecurityConfig {
 //    }
 
     @Bean
-    PasswordEncoder  passwordEncoder(){
-        return  new BCryptPasswordEncoder(10);
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(10);
     }
     // Ma hoa password de dung nhieu lan
 }

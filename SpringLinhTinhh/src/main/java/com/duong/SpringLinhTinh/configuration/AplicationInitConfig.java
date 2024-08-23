@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.util.HashSet;
 
 @Configuration
@@ -33,18 +34,19 @@ public class AplicationInitConfig {
     @ConditionalOnProperty(prefix = "spring",
             value = "datasource.driverClassName",
             havingValue = "com.mysql.cj.jdbc.Driver"
-    ) //Run khi datasource.driverClassName = com.mysql.cj.jdbc.Driver, ngc lai thi khong chay
+    )
+        //Run khi datasource.driverClassName = com.mysql.cj.jdbc.Driver, ngc lai thi khong chay
 
     ApplicationRunner applicationRunner(UserRepository userRepository) {
-            log.info("Application init config is running .......................");
+        log.info("Application init config is running .......................");
         return args -> {
-            if(userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()){
+            if (userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
                 var roles = new HashSet<String>();
                 roles.add(Role.ADMIN.name());
                 User user = User.builder()
                         .username(ADMIN_USER_NAME)
                         .password(passwordEncoder.encode(ADMIN_PASSWORD))
-                       // .roles(roles)
+                        // .roles(roles)
                         .build();
 
                 userRepository.save(user);
