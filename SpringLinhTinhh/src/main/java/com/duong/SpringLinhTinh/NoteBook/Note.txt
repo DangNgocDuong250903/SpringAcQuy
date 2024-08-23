@@ -1,6 +1,7 @@
-Fix error:
-Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled
-Trên Windows:
-Mở Command Prompt hoặc PowerShell với quyền quản trị.
-Chạy lệnh netstat -ano | findstr :8080 để tìm PID của tiến trình sử dụng cổng 8080.
-Sử dụng lệnh taskkill /PID <PID> /F để dừng tiến trình đó, thay <PID> bằng giá trị bạn tìm được.
+    @ConditionalOnProperty(prefix = "spring",
+            value = "datasource.driverClassName",
+            havingValue = "com.mysql.cj.jdbc.Driver"
+    ) //Run khi datasource.driverClassName = com.mysql.cj.jdbc.Driver, ngc lai thi khong chay
+
+
+    Class: AplicationInitConfig
