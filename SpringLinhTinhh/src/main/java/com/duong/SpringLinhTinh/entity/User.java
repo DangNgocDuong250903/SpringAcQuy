@@ -1,6 +1,7 @@
 package com.duong.SpringLinhTinh.entity;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.*;
@@ -26,7 +27,7 @@ public class User {
     String lastName;
     LocalDate dob;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     Set<Role> roles;
 
 }

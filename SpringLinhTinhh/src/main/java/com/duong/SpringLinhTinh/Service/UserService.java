@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +40,11 @@ public class UserService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
+//--------------------------------------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------------------------------------
+
     public UserResponse createUser(UserCreationRequest request) {
         log.info("Service create user: {}", request);
         User user = userMapper.toUser(request);
@@ -48,11 +54,14 @@ public class UserService {
         //Ma hoa Pass
         //PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);  //Da khai bao Bean nay trong SecurityConfig
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
         // Ensure roles are assigned to users
         HashSet<Role> roles = new HashSet<>();
-        roleRepository.findById(PredefinedRole.USER_ROLE)
-                .ifPresent(roles::add);
+        roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(roles::add);
+
+        log.info("Role đã gán là: {}", roles);
         user.setRoles(roles);
+
         try {
             user = userRepository.save(user);
         } catch (DataIntegrityViolationException exception) {
@@ -71,22 +80,17 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    //hasrole -> check
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//     @PreAuthorize("hasAuthority('APPROVE_POST ')")
+
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getUsers() {
-        log.info("In method getUser");
-        return userRepository.findAll().stream()
-                .map(userMapper::toUserResponse)
-                .collect(Collectors.toList());
+        log.info("In method get Users");
+        return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }
 
-    //Chi có user có username trùng với username trong token mới được phép xem thông tin
-    @PostAuthorize("returnObject.username == authentication.name")
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse getUser(String id) {
-        log.info("In method get User by ID");
-        return userMapper.toUserResponse(userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found")));
+        return userMapper.toUserResponse(
+                userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
 

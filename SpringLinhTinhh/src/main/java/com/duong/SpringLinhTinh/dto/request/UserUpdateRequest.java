@@ -14,10 +14,10 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
-    private String password;
-    private String firstName;
-    private String lastName;
-    @DobConstraint( min = 18,message = "INVALID_DOB")
-    private LocalDate dob;
+    String password;
+    String firstName;
+    String lastName;
+    @DobConstraint(min = 18, message = "INVALID_DOB")
+    LocalDate dob;
     List<String> roles;
 }
