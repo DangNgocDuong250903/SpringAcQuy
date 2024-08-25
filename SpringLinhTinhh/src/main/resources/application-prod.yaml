@@ -1,3 +1,4 @@
 jwt:
+  #  signerKey: "IFVxem5KVyFaoQ6JRtwyPrxromF3nEhB3KNo5Q44DCqVlIuSsYNte3Syjdg6vvCw" //Edit eviroment variable trong current file
   valid-duration: 7200 # in second
-  refreshable-duration: 72000 # in seconds
+  refreshable - duration: 720000
