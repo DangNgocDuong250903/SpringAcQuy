@@ -1,10 +1,11 @@
 package com.duong.SpringLinhTinh.Service;
 
+import com.duong.SpringLinhTinh.constant.PredefinedRole;
 import com.duong.SpringLinhTinh.dto.request.UserCreationRequest;
 import com.duong.SpringLinhTinh.dto.request.UserUpdateRequest;
 import com.duong.SpringLinhTinh.dto.response.UserResponse;
+import com.duong.SpringLinhTinh.entity.Role;
 import com.duong.SpringLinhTinh.entity.User;
-import com.duong.SpringLinhTinh.enums.Role;
 import com.duong.SpringLinhTinh.exception.AppException;
 import com.duong.SpringLinhTinh.exception.ErrorCode;
 import com.duong.SpringLinhTinh.mapper.RoleRepository;
@@ -41,19 +42,19 @@ public class UserService {
     public UserResponse createUser(UserCreationRequest request) {
         log.info("Service create user: {}", request);
         User user = userMapper.toUser(request);
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new AppException(ErrorCode.USER_EXISTED);
-        }
+//        if (userRepository.existsByUsername(request.getUsername())) {
+//            throw new AppException(ErrorCode.USER_EXISTED);
+//        }
         //Ma hoa Pass
         //PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);  //Da khai bao Bean nay trong SecurityConfig
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         // Ensure roles are assigned to users
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name()); // Default role
-       // user.setRoles(roles);
+        HashSet<Role> roles = new HashSet<>();
+        roleRepository.findById(PredefinedRole.USER_ROLE)
+                .ifPresent(roles::add);
+        user.setRoles(roles);
         try {
             user = userRepository.save(user);
-            log.info("User created successfully: {}", user.getUsername());
         } catch (DataIntegrityViolationException exception) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
@@ -61,14 +62,15 @@ public class UserService {
     }
 
 
-    public  UserResponse getMyinfo(){
-       var context =  SecurityContextHolder.getContext();
-      String name= context.getAuthentication().getName();
+    public UserResponse getMyinfo() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
 
-      User user =  userRepository.findByUsername(name).orElseThrow(
-              () -> new AppException(ErrorCode.USER_NOT_EXISTED));
-      return userMapper.toUserResponse(user);
+        User user = userRepository.findByUsername(name).orElseThrow(
+                () -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return userMapper.toUserResponse(user);
     }
+
     //hasrole -> check
     @PreAuthorize("hasRole('ROLE_ADMIN')")
 //     @PreAuthorize("hasAuthority('APPROVE_POST ')")
@@ -83,7 +85,7 @@ public class UserService {
     @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUser(String id) {
         log.info("In method get User by ID");
-                return userMapper.toUserResponse(userRepository.findById(id)
+        return userMapper.toUserResponse(userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found")));
     }
 

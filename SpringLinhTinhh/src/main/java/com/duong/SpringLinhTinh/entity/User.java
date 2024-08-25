@@ -2,6 +2,7 @@ package com.duong.SpringLinhTinh.entity;
 
 import java.time.LocalDate;
 import java.util.Set;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -18,6 +19,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
     @Column(name = "username", unique = true, columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci")
+    //Đảm bảo không có username trùng nhau
     String username;
     String password;
     String firstName;
